@@ -45,6 +45,7 @@ Use **one** of `OPENAI_AGENT_ID` (assistant) or `OPENAI_WORKFLOW_ID` (workflow).
 | Variable | Description |
 |---|---|
 | `VITE_API_URL` | Backend URL (e.g. `http://localhost:3001`) |
+| `VITE_CHATKIT_DOMAIN_KEY` | **Workflow mode only.** Domain key (public key) from the [OpenAI domain allowlist](https://platform.openai.com/settings/organization/security/domain-allowlist). Add your frontend domain there, copy the generated key, and set it in Vercel (or `.env.production`) so ChatKit can verify your trusted domain. |
 
 Set in `.env.development` for local dev and `.env.production` for production builds.
 
@@ -99,6 +100,7 @@ git push origin master
    - If not, open the **⋯** menu on the latest deployment and choose **Redeploy**.
 4. **Environment variables** (Settings → Environment Variables):
    - `VITE_API_URL` — the **exact** backend URL from step 2 (e.g. `https://xxx.up.railway.app`), no trailing slash.
+   - **Workflow (ChatKit) only:** `VITE_CHATKIT_DOMAIN_KEY` — the domain key from the OpenAI domain allowlist for your frontend domain.
    - **Important:** Changing env vars does **not** automatically redeploy. After saving:
      - Go to **Deployments** → **⋯** on the latest deployment → **Redeploy**,  
      - or push a small commit and let the new build use the updated vars.
