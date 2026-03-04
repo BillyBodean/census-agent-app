@@ -9,6 +9,8 @@ const { isWorkflowId } = require('./routes/chatkit');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 const allowedOrigins = [process.env.ALLOWED_ORIGIN, 'https://cdn.platform.openai.com'].filter(Boolean);
 app.use(cors({
   origin: (origin, cb) => {

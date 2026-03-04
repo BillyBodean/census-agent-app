@@ -39,9 +39,11 @@ async function askWithAssistantsAPI(question) {
   return text || '(No text in response.)';
 }
 
-async function askWithWorkflowAPI(question, workflowId) {
+async function askWithWorkflowAPI(question, wfId) {
+  const model = process.env.OPENAI_MODEL || 'gpt-4.1';
   const run = await openai.responses.create({
-    workflow: workflowId,
+    model,
+    workflow: wfId,
     input: question,
   });
   return run.output_text ?? '';

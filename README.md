@@ -35,6 +35,7 @@ npm run dev            # http://localhost:5173
 | `OPENAI_API_KEY` | Your OpenAI API key |
 | `OPENAI_AGENT_ID` | **Workflow** ID (`wf_...`) from Simple Agent Builder, or **Assistant** ID (`asst_...`). For workflows, you can also set `OPENAI_WORKFLOW_ID` instead. |
 | `OPENAI_WORKFLOW_ID` | Optional. **Workflow** ID (`wf_...`) from Simple Agent Builder. If set, the backend calls the Responses API with `workflow: "wf_..."` and your input. If not set, `OPENAI_AGENT_ID` is used (workflow or assistant). |
+| `OPENAI_MODEL` | Optional. Model for workflow calls (e.g. `gpt-4.1`). Defaults to `gpt-4.1`. |
 | `ALLOWED_ORIGIN` | Frontend URL for CORS (e.g. `http://localhost:5173`) |
 | `PORT` | Server port (default `3001`) |
 
