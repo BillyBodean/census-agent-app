@@ -39,6 +39,14 @@ async function askWithAssistantsAPI(question) {
   return text || '(No text in response.)';
 }
 
+async function askWithWorkflowAPI(question, workflowId) {
+  const run = await openai.responses.create({
+    workflow: workflowId,
+    input: question,
+  });
+  return run.output_text ?? '';
+}
+
 async function askWithResponsesAPI(question) {
   const run = await openai.responses.create({
     model: 'gpt-4o',
@@ -61,16 +69,16 @@ router.post('/', async (req, res) => {
   if (!id?.trim()) {
     return res.status(500).json({ error: 'Server configuration error: OPENAI_AGENT_ID or OPENAI_WORKFLOW_ID is not set.' });
   }
-  if (isWorkflowId(id)) {
-    return res.status(400).json({
-      error: 'This backend is configured with a workflow ID. Use the ChatKit chat UI instead of POST /ask.',
-    });
-  }
 
   try {
-    const answer = isAssistantId(agentId)
-      ? await askWithAssistantsAPI(question.trim())
-      : await askWithResponsesAPI(question.trim());
+    let answer;
+    if (isWorkflowId(id)) {
+      answer = await askWithWorkflowAPI(question.trim(), id);
+    } else if (isAssistantId(agentId)) {
+      answer = await askWithAssistantsAPI(question.trim());
+    } else {
+      answer = await askWithResponsesAPI(question.trim());
+    }
 
     return res.json({ answer: answer || 'No answer generated.' });
   } catch (err) {

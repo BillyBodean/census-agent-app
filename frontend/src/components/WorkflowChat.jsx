@@ -33,6 +33,10 @@ function WorkflowChatInner() {
       <div style={{ minHeight: 480, border: '1px solid #e2e8f0', borderRadius: 12, overflow: 'hidden' }}>
         <ChatKit control={control} />
       </div>
+      <p style={{ marginTop: 16, fontSize: 13, color: '#94a3b8' }}>
+        If you see an empty box or CSP/cookie errors in the console, the ChatKit embed may be blocked by a known issue on OpenAI’s CDN. Report it at{' '}
+        <a href="https://help.openai.com" target="_blank" rel="noopener noreferrer" style={{ color: '#2563eb' }}>OpenAI Help</a> or try again later.
+      </p>
     </div>
   );
 }

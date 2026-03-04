@@ -33,19 +33,18 @@ npm run dev            # http://localhost:5173
 | Variable | Description |
 |---|---|
 | `OPENAI_API_KEY` | Your OpenAI API key |
-| `OPENAI_AGENT_ID` | **Assistant** ID (`asst_...`) for the Assistants API — single Q&A form |
-| `OPENAI_WORKFLOW_ID` | **Workflow** ID (`wf_...`) from Agent Builder — uses ChatKit chat UI |
+| `OPENAI_AGENT_ID` | **Workflow** ID (`wf_...`) from Simple Agent Builder, or **Assistant** ID (`asst_...`). For workflows, you can also set `OPENAI_WORKFLOW_ID` instead. |
+| `OPENAI_WORKFLOW_ID` | Optional. **Workflow** ID (`wf_...`) from Simple Agent Builder. If set, the backend calls the Responses API with `workflow: "wf_..."` and your input. If not set, `OPENAI_AGENT_ID` is used (workflow or assistant). |
 | `ALLOWED_ORIGIN` | Frontend URL for CORS (e.g. `http://localhost:5173`) |
 | `PORT` | Server port (default `3001`) |
 
-Use **one** of `OPENAI_AGENT_ID` (assistant) or `OPENAI_WORKFLOW_ID` (workflow). For Agent Builder workflows, set `OPENAI_WORKFLOW_ID` to your `wf_...` ID; the app will show the ChatKit chat interface instead of the simple ask form.
+The app uses a **simple text box + Ask button**. The backend calls the **OpenAI Responses API**: with a workflow ID (`wf_...`) it uses `workflow: "wf_..."` and `input`; with an assistant ID (`asst_...`) it uses the Assistants API (thread + run). No ChatKit required.
 
 ### Frontend
 
 | Variable | Description |
 |---|---|
 | `VITE_API_URL` | Backend URL (e.g. `http://localhost:3001`) |
-| `VITE_CHATKIT_DOMAIN_KEY` | **Workflow mode only.** Domain key (public key) from the [OpenAI domain allowlist](https://platform.openai.com/settings/organization/security/domain-allowlist). Add your frontend domain there, copy the generated key, and set it in Vercel (or `.env.production`) so ChatKit can verify your trusted domain. |
 
 Set in `.env.development` for local dev and `.env.production` for production builds.
 
@@ -100,7 +99,6 @@ git push origin master
    - If not, open the **⋯** menu on the latest deployment and choose **Redeploy**.
 4. **Environment variables** (Settings → Environment Variables):
    - `VITE_API_URL` — the **exact** backend URL from step 2 (e.g. `https://xxx.up.railway.app`), no trailing slash.
-   - **Workflow (ChatKit) only:** `VITE_CHATKIT_DOMAIN_KEY` — the domain key from the OpenAI domain allowlist for your frontend domain.
    - **Important:** Changing env vars does **not** automatically redeploy. After saving:
      - Go to **Deployments** → **⋯** on the latest deployment → **Redeploy**,  
      - or push a small commit and let the new build use the updated vars.
@@ -114,9 +112,7 @@ git push origin master
 ### 5. Verify
 
 1. Open your **Vercel** app URL in a browser.
-2. You should see either:
-   - **Workflow:** ChatKit chat UI (if `OPENAI_WORKFLOW_ID` is set).
-   - **Assistant:** Single question box (if `OPENAI_AGENT_ID` is set).
+2. You should see the **simple question box** and Ask button.
 3. Ask a test question. If you get a CORS or “invalid response” error, double-check:
    - `ALLOWED_ORIGIN` in Railway = exact Vercel URL.
    - `VITE_API_URL` in Vercel = exact Railway backend URL.
