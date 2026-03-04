@@ -39,7 +39,8 @@ npm run dev            # http://localhost:5173
 | `ALLOWED_ORIGIN` | Frontend URL for CORS (e.g. `http://localhost:5173`) |
 | `PORT` | Server port (default `3001`) |
 
-The app uses a **simple text box + Ask button**. The backend calls the **OpenAI Responses API**: with a workflow ID (`wf_...`) it uses `workflow: "wf_..."` and `input`; with an assistant ID (`asst_...`) it uses the Assistants API (thread + run). No ChatKit required.
+- When **OPENAI_WORKFLOW_ID** (or **OPENAI_AGENT_ID**) is a workflow ID (`wf_...`), the frontend shows **ChatKit**: an embeddable chat backed by your Agent Builder workflow. The backend creates a ChatKit session and returns a client secret; the UI follows the [ChatKit embed guide](https://developers.openai.com/api/docs/guides/chatkit#embed-chatkit-in-your-frontend).
+- When the backend is configured with an assistant ID (`asst_...`) or no workflow, the app falls back to a **simple Ask box** (POST `/ask`).
 
 ### Frontend
 
