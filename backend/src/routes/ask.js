@@ -11,15 +11,15 @@ function isAssistantId(id) {
   return typeof id === 'string' && id.startsWith('asst_');
 }
 
-async function askWithAssistantsAPI(question) {
+async function runThreadWithAgent(question, agentOrWorkflowId, options = {}) {
   const thread = await openai.beta.threads.create();
   await openai.beta.threads.messages.create(thread.id, {
     role: 'user',
     content: question,
   });
-  const run = await openai.beta.threads.runs.createAndPoll(thread.id, {
-    assistant_id: agentId,
-  });
+  const runOptions = { assistant_id: agentOrWorkflowId };
+  if (options.model) runOptions.model = options.model;
+  const run = await openai.beta.threads.runs.createAndPoll(thread.id, runOptions);
   if (run.status !== 'completed') {
     const err = new Error(`Run ended with status: ${run.status}`);
     err.status = 500;
@@ -39,14 +39,13 @@ async function askWithAssistantsAPI(question) {
   return text || '(No text in response.)';
 }
 
+async function askWithAssistantsAPI(question) {
+  return runThreadWithAgent(question, agentId);
+}
+
 async function askWithWorkflowAPI(question, wfId) {
   const model = process.env.OPENAI_MODEL || 'gpt-4.1';
-  const run = await openai.responses.create({
-    model,
-    workflow: wfId,
-    input: question,
-  });
-  return run.output_text ?? '';
+  return runThreadWithAgent(question, wfId, { model });
 }
 
 async function askWithResponsesAPI(question) {
@@ -95,7 +94,7 @@ router.post('/', async (req, res) => {
       return res.status(500).json({ error: 'Server configuration error. Check OPENAI_API_KEY.' });
     }
     if (status === 404) {
-      return res.status(500).json({ error: 'Assistant or model not found. Check OPENAI_AGENT_ID.' });
+      return res.status(500).json({ error: 'Workflow, assistant, or model not found. Check OPENAI_WORKFLOW_ID / OPENAI_AGENT_ID.' });
     }
     if (err.runStatus === 'failed' || err.runStatus === 'cancelled' || err.runStatus === 'expired') {
       return res.status(500).json({ error: `Request did not complete (${err.runStatus}). Please try again.` });
