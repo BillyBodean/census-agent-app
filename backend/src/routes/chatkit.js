@@ -9,7 +9,7 @@ function isWorkflowId(id) {
   return typeof id === 'string' && id.trim().length > 0 && id.startsWith('wf_');
 }
 
-router.post('/session', async (req, res) => {
+async function createSession(req, res) {
   if (!isWorkflowId(workflowId)) {
     return res.status(500).json({
       error: 'Server is not configured with a workflow ID. Set OPENAI_WORKFLOW_ID or OPENAI_AGENT_ID to a wf_... value.',
@@ -37,7 +37,10 @@ router.post('/session', async (req, res) => {
       error: 'Failed to create chat session. Please try again.',
     });
   }
-});
+}
+
+router.post('/session', createSession);
+router.post('/sessions', createSession);
 
 module.exports = router;
 module.exports.isWorkflowId = isWorkflowId;

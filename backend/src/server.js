@@ -9,8 +9,12 @@ const { isWorkflowId } = require('./routes/chatkit');
 
 const app = express();
 
+const allowedOrigins = [process.env.ALLOWED_ORIGIN, 'https://cdn.platform.openai.com'].filter(Boolean);
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGIN,
+  origin: (origin, cb) => {
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, origin || true);
+    cb(null, false);
+  },
   methods: ['GET', 'POST'],
 }));
 app.use(express.json({ limit: '16kb' }));

@@ -10,3 +10,7 @@ export async function getConfig() {
 export function getSessionUrl() {
   return `${BASE_URL}/chatkit/session`;
 }
+
+export function getChatKitApiUrl() {
+  return `${BASE_URL}/chatkit`;
+}
