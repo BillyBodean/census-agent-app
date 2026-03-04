@@ -50,6 +50,8 @@ npm run dev            # http://localhost:5173
 
 Set in `.env.development` for local dev and `.env.production` for production builds.
 
+**ChatKit embed:** Do **not** set `VITE_CHATKIT_DOMAIN_KEY`. The app uses the [embed flow](https://developers.openai.com/api/docs/guides/chatkit#embed-chatkit-in-your-frontend): the frontend gets a client secret from `POST /chatkit/session`, then ChatKit talks to OpenAI. If you set a domain key, the widget may try to call your backend at `/chatkit` and fail.
+
 ## Deployment
 
 - **Backend**: Deploy to [Railway](https://railway.app) — set root directory to `backend`

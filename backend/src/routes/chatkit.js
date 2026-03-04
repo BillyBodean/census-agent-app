@@ -42,6 +42,12 @@ async function createSession(req, res) {
 router.post('/session', createSession);
 router.post('/sessions', createSession);
 
+router.post('/', (req, res) => {
+  res.status(400).json({
+    error: 'Use POST /chatkit/session to create a ChatKit session. Do not set VITE_CHATKIT_DOMAIN_KEY for the embed flow.',
+  });
+});
+
 module.exports = router;
 module.exports.isWorkflowId = isWorkflowId;
 module.exports.workflowId = workflowId;

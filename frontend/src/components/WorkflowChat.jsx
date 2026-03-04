@@ -1,26 +1,22 @@
 import { useChatKit, ChatKit } from '@openai/chatkit-react';
-import { getSessionUrl, getChatKitApiUrl } from '../api/config';
-
-const domainKey = import.meta.env.VITE_CHATKIT_DOMAIN_KEY?.trim() || '';
+import { getSessionUrl } from '../api/config';
 
 function WorkflowChatInner() {
-  const apiConfig = domainKey
-    ? { url: getChatKitApiUrl(), domainKey }
-    : {
-        async getClientSecret(_currentClientSecret) {
-          const res = await fetch(getSessionUrl(), {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({}),
-          });
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error || 'Failed to start chat session.');
-          }
-          const { client_secret } = await res.json();
-          return client_secret;
-        },
-      };
+  const apiConfig = {
+    async getClientSecret(_currentClientSecret) {
+      const res = await fetch(getSessionUrl(), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to start chat session.');
+      }
+      const { client_secret } = await res.json();
+      return client_secret;
+    },
+  };
 
   const { control } = useChatKit({ api: apiConfig });
 
