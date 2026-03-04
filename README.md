@@ -39,8 +39,8 @@ npm run dev            # http://localhost:5173
 | `ALLOWED_ORIGIN` | Frontend URL for CORS (e.g. `http://localhost:5173`) |
 | `PORT` | Server port (default `3001`) |
 
-- When **OPENAI_WORKFLOW_ID** (or **OPENAI_AGENT_ID**) is a workflow ID (`wf_...`), the frontend shows **ChatKit**: an embeddable chat backed by your Agent Builder workflow. The backend creates a ChatKit session and returns a client secret; the UI follows the [ChatKit embed guide](https://developers.openai.com/api/docs/guides/chatkit#embed-chatkit-in-your-frontend).
-- When the backend is configured with an assistant ID (`asst_...`) or no workflow, the app falls back to a **simple Ask box** (POST `/ask`).
+- When **OPENAI_WORKFLOW_ID** (or **OPENAI_AGENT_ID**) is a workflow ID (`wf_...`), the app shows the **ChatKit** embed only (workflows run via ChatKit). The frontend waits for the ChatKit script to load, creates a session via `POST /chatkit/session`, and renders the [ChatKit widget](https://developers.openai.com/api/docs/guides/chatkit#embed-chatkit-in-your-frontend). `frontend/vercel.json` sets CSP headers so the page can load the script and frame from `cdn.platform.openai.com`.
+- When the backend is configured with an assistant ID (`asst_...`) or no workflow, the app shows the **simple Ask box** (POST `/ask`).
 
 ### Frontend
 
@@ -51,6 +51,18 @@ npm run dev            # http://localhost:5173
 Set in `.env.development` for local dev and `.env.production` for production builds.
 
 **ChatKit embed:** Do **not** set `VITE_CHATKIT_DOMAIN_KEY`. The app uses the [embed flow](https://developers.openai.com/api/docs/guides/chatkit#embed-chatkit-in-your-frontend): the frontend gets a client secret from `POST /chatkit/session`, then ChatKit talks to OpenAI. If you set a domain key, the widget may try to call your backend at `/chatkit` and fail.
+
+### ChatKit console messages (CSP / cookies)
+
+When ChatKit loads, the browser console may show messages from the embed (iframe from `cdn.platform.openai.com`):
+
+- **Content-Security-Policy (Report-Only)** — From OpenAI’s CDN. Report-Only means it does not block; safe to ignore.
+- **Partitioned cookie or storage access** — Normal for third-party iframes; the browser is describing isolation, not an error.
+- **Cookie rejected (SameSite / invalid domain)** — Common when the chat runs in a cross-site iframe. If the chat works, you can ignore these.
+- **CSP blocked a script (e.g. `cdn-cgi/challenge-platform`) ** — This comes from the *iframe’s* policy (OpenAI’s page), not from your app. You can’t fix it in this repo. If the chat still works, ignore it; if the chat is broken, try another browser or report to [OpenAI Help](https://help.openai.com).
+- **Source map error / &lt;anonymous&gt;** — DevTools trying to load source maps; harmless.
+
+Your app does not set any CSP. If the chat loads and you can send messages, these messages are expected and do not require changes.
 
 ## Deployment
 
